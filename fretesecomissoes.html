@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fretes e Comissões</title>
+  <link rel="icon" type="image/png" href="image/iconetruck.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: black;
+      margin: 0;
+      padding: 0;
+    }
+  footer{
+    font-size: 180%;
+    text-align: center;
+    margin-top: 20px;
+    padding: 5%;
+    margin-bottom: 0px;
+    color:red;
+    background: white;
+  }
+
+    h1 {
+      color: red;
+      text-align: center;
+      font-size:600%;
+    }
+    h3 {
+      text-align: center;
+    }
+
+    form, .filter {
+      font-size: 200%;
+      width: 95%;
+      height: 100ppx;
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 0.5%;
+      padding: 25px;
+    }
+
+    input, button {
+      font-size:100%;
+      height: 15%;
+      padding: 5%;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 5px;
+      gap: 20px;
+    }
+
+    table {
+      width: 100%;
+      height:150px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      font-size:190%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    .total {
+      background-color: white;
+      font-size: 190%;
+      color: black;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .danger {
+      font-size: 200%;
+      background-color: white;
+      color: black;
+      border: none;
+      padding: 10%;
+      width: 100%;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .resumo {
+      display: none;
+    }
+
+    .botoes-extras {
+      font-size: 100%;
+      color: black;
+      display: flex;
+      gap: 30px;
+      margin-bottom: 20px;
+      padding: -200px;
+    }
+
+    .b
+  </style>
+</head>
+<body>
+
+  <h1>Fretes e Comissões</h1>
+
+  <form id="notaForm">
+    <label>Data:
+      <input type="date" id="data" required>
+    </label>
+    <label>Local de carregamento:
+      <input type="text" id="origem" required>
+    </label>
+    <label>Local de descarga:
+      <input type="text" id="destino" required>
+    </label>
+    <label>Valor do Frete (R$):
+      <input type="number" id="valor" step="0.01" required>
+    </label>
+    <button type="submit">Inserir</button>
+  </form>
+
+  <div class="botoes-extras">
+    <button onclick="limparRegistros()" class="danger">Limpar Todos os Registros</button>
+    <button onclick="excluirNotasDoPeriodo()" class="danger">Excluir fretes do Período</button>
+  </div>
+
+  <div class="filter">
+    <h3>Filtrar por Período</h3>
+    <label>De:
+      <input type="date" id="filtroInicio">
+    </label>
+    <label>Até:
+      <input type="date" id="filtroFim">
+    </label>
+    <button onclick="filtrarNotas()">Filtrar</button>
+    <button onclick="limparFiltro()">Limpar Filtro</button>
+  </div>
+
+  <table id="tabelaNotas">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Local de carregamento</th>
+        <th>Local de  descarga</th>
+        <th>Valor do frete (R$)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="resumo" id="resumoValores">
+    <div class="total" id="totalAcumulado"></div>
+    <div class="total" id="comissao"></div>
+  </div>
+  <footer>Sistema criado por Paulo Renato</footer>
+  <script>
+    const form = document.getElementById('notaForm');
+    const tabela = document.querySelector('#tabelaNotas tbody');
+    const totalDisplay = document.getElementById('totalAcumulado');
+    const comissaoDisplay = document.getElementById('comissao');
+    const resumo = document.getElementById('resumoValores');
+
+    let notas = JSON.parse(localStorage.getItem('notasViagem')) || [];
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nota = {
+        data: document.getElementById('data').value,
+        origem: document.getElementById('origem').value,
+        destino: document.getElementById('destino').value,
+        valor: parseFloat(document.getElementById('valor').value)
+      };
+
+      notas.push(nota);
+      localStorage.setItem('notasViagem', JSON.stringify(notas));
+      form.reset();
+      renderizarNotas(notas, false);
+    });
+
+    function formatarData(dataISO) {
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano.slice(2)}`;
+    }
+
+    function renderizarNotas(lista = notas, mostrarResumo = true) {
+      tabela.innerHTML = '';
+      let total = 0;
+
+      lista.forEach(nota => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${formatarData(nota.data)}</td>
+          <td>${nota.origem}</td>
+          <td>${nota.destino}</td>
+          <td>R$ ${nota.valor.toFixed(2)}</td>
+        `;
+        tabela.appendChild(tr);
+        total += nota.valor;
+      });
+
+      if (mostrarResumo && lista.length > 0) {
+        resumo.style.display = 'block';
+        totalDisplay.textContent = `Total no Período: R$ ${total.toFixed(2)}`;
+        calcularComissao(total);
+      } else {
+        resumo.style.display = 'none';
+      }
+    }
+
+    function filtrarNotas() {
+      const inicio = document.getElementById('filtroInicio').value;
+      const fim = document.getElementById('filtroFim').value;
+
+      const filtradas = notas.filter(nota => {
+        return (!inicio || nota.data >= inicio) && (!fim || nota.data <= fim);
+      });
+
+      renderizarNotas(filtradas, true);
+    }
+
+    function limparFiltro() {
+      document.getElementById('filtroInicio').value = '';
+      document.getElementById('filtroFim').value = '';
+      renderizarNotas(notas, false);
+    }
+
+    function excluirNotasDoPeriodo() {
+      const inicio = document.getElementById('filtroInicio').value;
+      const fim = document.getElementById('filtroFim').value;
+
+      if (!inicio && !fim) {
+        alert('Selecione um período para excluir notas.');
+        return;
+      }
+
+      const confirmacao = confirm('Tem certeza que deseja excluir todas as notas dentro do período selecionado?');
+
+      if (confirmacao) {
+        notas = notas.filter(nota => !( (!inicio || nota.data >= inicio) && (!fim || nota.data <= fim) ));
+        localStorage.setItem('notasViagem', JSON.stringify(notas));
+        renderizarNotas(notas, false);
+        alert('Notas do período excluídas com sucesso!');
+      }
+    }
+
+    function calcularComissao(total) {
+      let percentual = 0;
+
+      if (total >= 35000) {
+        percentual = 3.5;
+      } else if (total >= 20000) {
+        percentual = 2 + ((total - 20000) / 1000) * 0.1;
+        if (percentual > 3.5) percentual = 3.5;
+      } else {
+        percentual = 2;
+      }
+
+      const comissaoValor = (total * percentual) / 100;
+      comissaoDisplay.textContent =
+        `Comissão: R$ ${comissaoValor.toFixed(2)} (${percentual.toFixed(1)}%)`;
+    }
+
+    function limparRegistros() {
+      if (confirm('Tem certeza que deseja apagar todos os registros?')) {
+        localStorage.removeItem('notasViagem');
+        notas = [];
+        renderizarNotas(notas, false);
+        alert('Registros apagados com sucesso!');
+      }
+    }
+
+    // Inicializa sem mostrar o resumo
+    renderizarNotas(notas, false);
+  </script>
+</body>
+</html>
