@@ -1,81 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
   <title>Fretes e Comissões</title>
-  <link rel="icon" type="image/png" href="image/iconetruck.png">
+  <link rel="icon" type="png" href="iconetruck.png">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url(image/truck3.jpg);
-      background-attachment: fixed ;
+      background-color: black;
+      background-attachment: fixed;
       margin: 0;
       padding: 0;
     }
-  footer{
-    font-size: 180%;
-    text-align: center;
-    margin-top: 20px;
-    padding: 5%;
-    margin-bottom: 0px;
-    color:red;
-    background: white;
-  }
-
+    footer {
+      font-size: 180%;
+      text-align: center;
+      margin-top: 5px;
+      padding: 1%;
+      margin-bottom: 0px;
+      color: red;
+      background: white;
+    }
     h1 {
+
       color: red;
       text-align: center;
-      font-size:600%;
+      font-size: 500%;
     }
     h3 {
       text-align: center;
     }
-
     form, .filter {
       margin: auto;
       font-size: 200%;
       width: 90%;
-      height: 100ppx;
       background: white;
       padding: 15px;
       margin-bottom: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
     label {
       display: block;
       margin-top: 0.5%;
       padding: 25px;
     }
-
     input, button {
       margin: auto;
-      font-size:100%;
-      height: 15%;
+      font-size: 100%;
       padding: 5%;
       width: 100%;
       box-sizing: border-box;
       margin-top: 5px;
       gap: 20px;
     }
-
     table {
       margin: auto;
       width: 95%;
-      height:150px;
       border-collapse: collapse;
       background: white;
       border-radius: 8px;
       overflow: hidden;
     }
-
     th, td {
-      font-size:160%;
+      font-size: 130%;
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
     }
-
     .total {
       background-color: white;
       font-size: 190%;
@@ -83,7 +75,6 @@
       text-align: center;
       font-weight: bold;
     }
-
     .danger {
       font-size: 200%;
       background-color: white;
@@ -94,11 +85,9 @@
       border-radius: 5px;
       margin-bottom: 20px;
     }
-
     .resumo {
       display: none;
     }
-
     .botoes-extras {
       margin: auto;
       font-size: 80%;
@@ -107,10 +96,22 @@
       width: 95%;
       gap: 30px;
       margin-bottom: 20px;
-      padding: -150px;
     }
-
-    .b
+    .pix{
+      background: green;
+      margin: auto;
+      font-size: 80%;
+      color: white;
+      display: flex;
+      width: 30%;
+      height: 5%;
+      margin-top: 1px;
+      border-radius: 20px
+    }
+  .apoio{
+    color: black;
+    font-size: 50%;
+  }
   </style>
 </head>
 <body>
@@ -119,16 +120,16 @@
 
   <form id="notaForm">
     <label>Data:
-      <input type="date" id="data" required="">
+      <input type="date" id="data" required>
     </label>
     <label>Local de carregamento:
-      <input type="text" id="origem" required="">
+      <input type="text" id="origem" required>
     </label>
     <label>Local de descarga:
-      <input type="text" id="destino" required="">
+      <input type="text" id="destino" required>
     </label>
     <label>Valor do Frete (R$):
-      <input type="number" id="valor" step="0.01" required="">
+      <input type="number" id="valor" step="0.01" required>
     </label>
     <button type="submit">Inserir</button>
   </form>
@@ -146,7 +147,7 @@
     <label>Até:
       <input type="date" id="filtroFim">
     </label>
-    <button onclick="filtrarNotas()">Filtrar</button>
+    <button id="btnFiltrar" onclick="filtrarNotas()" disabled style="opacity: 0.5; cursor: not-allowed;">Filtrar</button>
     <button onclick="limparFiltro()">Limpar Filtro</button>
   </div>
 
@@ -159,30 +160,32 @@
         <th>Valor do frete (R$)</th>
       </tr>
     </thead>
-    <tbody><tr>
-          <td>16/05/25</td>
-          <td>Ouro Branco - MG</td>
-          <td>Barroso - MG</td>
-          <td>R$ 1980.65</td>
-        </tr><tr>
-          <td>17/05/25</td>
-          <td>Pains - MG</td>
-          <td>Ouro Branco - MG</td>
-          <td>R$ 3521.07</td>
-        </tr></tbody>
+    <tbody></tbody>
   </table>
 
-  <div class="resumo" id="resumoValores" style="display: none;">
+  <div class="resumo" id="resumoValores">
     <div class="total" id="totalAcumulado"></div>
     <div class="total" id="comissao"></div>
   </div>
-  <footer>Sistema criado por Paulo Renato</footer>
+
+  <footer>Sistema criado por Paulo Renato
+    <h4 class="apoio">
+      ajude a aprimorar e desenvolver mais app como este, qualquer valor será muito bem vindo!
+    </h4>
+      <button class="pix" onclick="copiarChavePix()">Copiar chave PIX</button>
+    </div>
+  </footer>
+
   <script>
     const form = document.getElementById('notaForm');
     const tabela = document.querySelector('#tabelaNotas tbody');
     const totalDisplay = document.getElementById('totalAcumulado');
     const comissaoDisplay = document.getElementById('comissao');
     const resumo = document.getElementById('resumoValores');
+
+    const filtroInicio = document.getElementById('filtroInicio');
+    const filtroFim = document.getElementById('filtroFim');
+    const btnFiltrar = document.getElementById('btnFiltrar');
 
     let notas = JSON.parse(localStorage.getItem('notasViagem')) || [];
 
@@ -233,8 +236,8 @@
     }
 
     function filtrarNotas() {
-      const inicio = document.getElementById('filtroInicio').value;
-      const fim = document.getElementById('filtroFim').value;
+      const inicio = filtroInicio.value;
+      const fim = filtroFim.value;
 
       const filtradas = notas.filter(nota => {
         return (!inicio || nota.data >= inicio) && (!fim || nota.data <= fim);
@@ -244,14 +247,15 @@
     }
 
     function limparFiltro() {
-      document.getElementById('filtroInicio').value = '';
-      document.getElementById('filtroFim').value = '';
+      filtroInicio.value = '';
+      filtroFim.value = '';
+      atualizarEstadoBotao();
       renderizarNotas(notas, false);
     }
 
     function excluirNotasDoPeriodo() {
-      const inicio = document.getElementById('filtroInicio').value;
-      const fim = document.getElementById('filtroFim').value;
+      const inicio = filtroInicio.value;
+      const fim = filtroFim.value;
 
       if (!inicio && !fim) {
         alert('Selecione um período para excluir notas.');
@@ -293,7 +297,39 @@
         alert('Registros apagados com sucesso!');
       }
     }
+
+    function atualizarEstadoBotao() {
+      const inicioPreenchido = filtroInicio.value !== '';
+      const fimPreenchido = filtroFim.value !== '';
+
+      if (inicioPreenchido && fimPreenchido) {
+        btnFiltrar.disabled = false;
+        btnFiltrar.style.opacity = '1';
+        btnFiltrar.style.cursor = 'pointer';
+      } else {
+        btnFiltrar.disabled = true;
+        btnFiltrar.style.opacity = '0.5';
+        btnFiltrar.style.cursor = 'not-allowed';
+      }
+    }
+
+    filtroInicio.addEventListener('input', atualizarEstadoBotao);
+    filtroFim.addEventListener('input', atualizarEstadoBotao);
+    atualizarEstadoBotao();
+
     renderizarNotas(notas, false);
   </script>
 
-</body></html>
+<script>
+  function copiarChavePix() {
+    const chavePix = '49d0c7a5-d9e8-460d-b68c-bafd981bb69a';
+    navigator.clipboard.writeText(chavePix).then(() => {
+      alert('Chave PIX copiada para a área de transferência!');
+    }).catch(err => {
+      alert('Erro ao copiar a chave PIX: ' + err);
+    });
+  }
+</script>
+
+</body>
+</html>
