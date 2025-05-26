@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Fretes e Comissões</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" sizes="192x192" href="truck.png">
+  <link rel="icon" type="png"  href="iconetruck.png">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,6 +28,8 @@
       font-size: 500%;
     }
     h3 {
+      margin: 0;
+      padding: 0;
       text-align: center;
     }
     form, .filter {
@@ -77,6 +78,8 @@
       font-weight: bold;
     }
     .danger {
+      margin-top: 20px;
+      margin-bottom: 5px;
       font-size: 200%;
       background-color: white;
       color: black;
@@ -90,13 +93,13 @@
       display: none;
     }
     .botoes-extras {
-      margin: auto;
       font-size: 80%;
       color: black;
       display: flex;
       width: 95%;
       gap: 30px;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
+      margin-left: 3%;
     }
     .pix{
       background: green;
@@ -135,26 +138,10 @@
     <button type="submit">Inserir</button>
   </form>
 
-  <div class="botoes-extras">
-    <button onclick="limparRegistros()" class="danger">Limpar Todos os Registros</button>
-    <button onclick="excluirNotasDoPeriodo()" class="danger">Excluir fretes do Período</button>
-  </div>
-
-  <div class="filter">
-    <h3>Filtrar por Período</h3>
-    <label>De:
-      <input type="date" id="filtroInicio">
-    </label>
-    <label>Até:
-      <input type="date" id="filtroFim">
-    </label>
-    <button id="btnFiltrar" onclick="filtrarNotas()" disabled style="opacity: 0.5; cursor: not-allowed;">Filtrar</button>
-    <button onclick="limparFiltro()">Limpar Filtro</button>
-  </div>
-
-  <table id="tabelaNotas">
+<table id="tabelaNotas">
     <thead>
       <tr>
+        <th></th>
         <th>Data</th>
         <th>Local de carregamento</th>
         <th>Local de  descarga</th>
@@ -163,6 +150,23 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  <div class="botoes-extras">
+    <button onclick="excluirtudo()" class="danger">Excluir Tudo </button>
+    <button onclick="excluirfreteselecionado()" class="danger">Excluir frete Selecionado</button>
+  </div>
+
+  <div class="filter">
+    <h3>Período</h3>
+    <label>De:
+      <input type="date" id="filtroInicio">
+    </label>
+    <label>Até:
+      <input type="date" id="filtroFim">
+    </label>
+    <button id="btnFiltrar" onclick="filtrarNotas()" disabled style="opacity: 0.5; cursor: not-allowed;">Selecionar</button>
+    <button onclick="limparFiltro()">Limpar</button>
+  </div>
 
   <div class="resumo" id="resumoValores">
     <div class="total" id="totalAcumulado"></div>
@@ -194,6 +198,7 @@
       e.preventDefault();
 
       const nota = {
+        id: Date.now(),
         data: document.getElementById('data').value,
         origem: document.getElementById('origem').value,
         destino: document.getElementById('destino').value,
@@ -206,36 +211,40 @@
       renderizarNotas(notas, false);
     });
 
+function formatarValor(valor) {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
     function formatarData(dataISO) {
       const [ano, mes, dia] = dataISO.split("-");
       return `${dia}/${mes}/${ano.slice(2)}`;
     }
 
     function renderizarNotas(lista = notas, mostrarResumo = true) {
-      tabela.innerHTML = '';
-      let total = 0;
+  tabela.innerHTML = '';
+  let total = 0;
 
-      lista.forEach(nota => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${formatarData(nota.data)}</td>
-          <td>${nota.origem}</td>
-          <td>${nota.destino}</td>
-          <td>R$ ${nota.valor.toFixed(2)}</td>
-        `;
-        tabela.appendChild(tr);
-        total += nota.valor;
-      });
+  lista.forEach((nota, i) => {
+    const index = notas.indexOf(nota);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="checkbox" class="selecionado" data-id="${nota.id}"></td>
+      <td>${formatarData(nota.data)}</td>
+      <td>${nota.origem}</td>
+      <td>${nota.destino}</td>
+      <td>${formatarValor(nota.valor)}</td>
+    `;
+    tabela.appendChild(tr);
+    total += nota.valor;
+  });
 
-      if (mostrarResumo && lista.length > 0) {
-        resumo.style.display = 'block';
-        totalDisplay.textContent = `Total no Período: R$ ${total.toFixed(2)}`;
-        calcularComissao(total);
-      } else {
-        resumo.style.display = 'none';
-      }
-    }
-
+  if (mostrarResumo && lista.length > 0) {
+    resumo.style.display = 'block';
+    totalDisplay.textContent = 'Total no Período: ' + formatarValor(total);
+    calcularComissao(total);
+  } else {
+    resumo.style.display = 'none';
+  }
+}
     function filtrarNotas() {
       const inicio = filtroInicio.value;
       const fim = filtroFim.value;
@@ -253,52 +262,56 @@
       atualizarEstadoBotao();
       renderizarNotas(notas, false);
     }
-
-    function excluirNotasDoPeriodo() {
-      const inicio = filtroInicio.value;
-      const fim = filtroFim.value;
-
-      if (!inicio && !fim) {
-        alert('Selecione um período para excluir notas.');
-        return;
-      }
-
-      const confirmacao = confirm('Tem certeza que deseja excluir todas as notas dentro do período selecionado?');
-
-      if (confirmacao) {
-        notas = notas.filter(nota => !( (!inicio || nota.data >= inicio) && (!fim || nota.data <= fim) ));
-        localStorage.setItem('notasViagem', JSON.stringify(notas));
-        renderizarNotas(notas, false);
-        alert('Notas do período excluídas com sucesso!');
-      }
-    }
-
     function calcularComissao(total) {
-      let percentual = 0;
+  let percentual = 0;
 
-      if (total >= 35000) {
-        percentual = 3.5;
-      } else if (total >= 20000) {
-        percentual = 2 + ((total - 20000) / 1000) * 0.1;
-        if (percentual > 3.5) percentual = 3.5;
-      } else {
-        percentual = 2;
-      }
+  if (total >= 35000) {
+    percentual = 3.5;
+  } else if (total >= 20000) {
+    percentual = 2 + ((total - 20000) / 1000) * 0.1;
+    if (percentual > 3.5) percentual = 3.5;
+  } else {
+    percentual = 2;
+  }
 
-      const comissaoValor = (total * percentual) / 100;
-      comissaoDisplay.textContent =
-        `Comissão: R$ ${comissaoValor.toFixed(2)} (${percentual.toFixed(1)}%)`;
-    }
+  const comissaoValor = (total * percentual) / 100;
 
-    function limparRegistros() {
-      if (confirm('Tem certeza que deseja apagar todos os registros?')) {
+  const comissaoFormatada = comissaoValor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const percentualFormatado = percentual.toFixed(1) + "%";
+
+  comissaoDisplay.textContent = `Comissão: ${comissaoFormatada} (${percentualFormatado})`;
+}
+    function excluirtudo() {
+      if (confirm('Tem certeza que deseja excluir tudo?')) {
         localStorage.removeItem('notasViagem');
         notas = [];
         renderizarNotas(notas, false);
-        alert('Registros apagados com sucesso!');
+        alert('Fretes excluidos com sucesso!');
       }
     }
+    function excluirfreteselecionado() {
+  if (confirm('Tem certeza que deseja excluir os fretes selecionados?')) {
+    const checkboxesSelecionados = document.querySelectorAll('.selecionado:checked');
+    const idsParaExcluir = Array.from(checkboxesSelecionados).map(cb => parseInt(cb.dataset.id));
 
+    // Remove os fretes com os IDs correspondentes
+    notas = notas.filter(nota => !idsParaExcluir.includes(nota.id));
+
+    // Atualiza o localStorage
+    localStorage.setItem('notasViagem', JSON.stringify(notas));
+
+    // Atualiza a interface
+    renderizarNotas(notas, false);
+
+    alert('Fretes selecionados excluídos com sucesso!');
+  }
+}
     function atualizarEstadoBotao() {
       const inicioPreenchido = filtroInicio.value !== '';
       const fimPreenchido = filtroFim.value !== '';
@@ -313,16 +326,13 @@
         btnFiltrar.style.cursor = 'not-allowed';
       }
     }
-
     filtroInicio.addEventListener('input', atualizarEstadoBotao);
     filtroFim.addEventListener('input', atualizarEstadoBotao);
     atualizarEstadoBotao();
 
     renderizarNotas(notas, false);
-  </script>
 
-<script>
-  function copiarChavePix() {
+    function copiarChavePix() {
     const chavePix = '49d0c7a5-d9e8-460d-b68c-bafd981bb69a';
     navigator.clipboard.writeText(chavePix).then(() => {
       alert('Chave PIX copiada para a área de transferência!');
@@ -330,7 +340,6 @@
       alert('Erro ao copiar a chave PIX: ' + err);
     });
   }
-</script>
-
+  </script>
 </body>
 </html>
