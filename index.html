@@ -263,12 +263,14 @@ function formatarValor(valor) {
       renderizarNotas(notas, false);
     }
     function calcularComissao(total) {
+  let div = Math.floor(total/1000);
+  let total3 = div*1000;
   let percentual = 0;
 
-  if (total >= 35000) {
+  if (total3 >= 35000) {
     percentual = 3.5;
-  } else if (total >= 20000) {
-    percentual = 2 + ((total - 20000) / 1000) * 0.1;
+  } else if (total3 >= 20000) {
+    percentual = 2 + ((total3 - 20000) / 1000) * 0.1;
     if (percentual > 3.5) percentual = 3.5;
   } else {
     percentual = 2;
