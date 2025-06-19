@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fretes e Comissões</title>
+  <link rel="icon" type="png"  href="iconetruck.png">
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #000000 100%);
+    min-height: 100vh;
+}
+#formHeader{
+    color: black;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding-top: 20px;
+}
+#submitBtn{
+    flex: 1;
+    font-size:2rem;
+    height: 5rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+#cancelBtn{
+    flex: 1;
+    font-size: 2rem;
+    height: 5rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;  
+}
+#modalConfirm{
+    flex: 1;
+    font size: 2rem;
+    height: 3.5rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+#modalCancel{
+    flex: 1;
+    font-size:2rem;
+    height: 3.5rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+#applyFilterBtn{
+    flex: 1;
+    font-size:2rem;
+    height: 5rem;
+    display:flex;
+    align-items: center;
+}
+    
+#clearFilterBtn{
+    font-size:2rem;
+    height: 5rem;
+    display:flex;
+    align-items: center;
+}    
+    
+/* tamanho dos boxs*/
+.container {
+    max-width: 98%;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.title {
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-weight: 800;
+    color: #dc2626;
+    margin-bottom: 1rem;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: #d1d5db;
+    max-width: 32rem;
+    margin: 0 auto;
+}
+/* botão cadastrar novo frete*/
+.main-btn {
+    width: 100%;
+    height: 5vh;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 180%;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.main-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+/* dados da tabela*/
+.card {
+    font-size: 150%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #1f2937;
+}
+
+.form-container {
+    margin-bottom: 2rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+form {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    height: 6rem;
+    padding: 0 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 2rem;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    flex: 1;
+    height: 3.5rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #b91c1c;
+}
+
+.btn-primary.edit-mode {
+    background: #2563eb;
+    
+}
+
+.btn-primary.edit-mode:hover {
+    background: #1d4ed8;
+}
+/* botao cancelar*/
+.btn-secondary {
+    height: 7rem;
+    padding: 0 1.5rem;
+    background:#dc2626;
+    color: white;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+}
+
+.table-section {
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease-out 0.2s both;
+}
+
+.table-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.table-header h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.count-badge {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.table-container {
+    overflow-x: auto;
+    background: transparent;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f9fafb;
+    padding: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.36rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.checkbox-col {
+    width: 3rem;
+    text-align: center;
+}
+
+.currency-col {
+    text-align: right;
+}
+
+.action-col {
+    width: 5rem;
+    text-align: center;
+}
+
+td {
+    padding: 0.5em;
+    border-top: 1.5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid transparent;
+    text-align:left;
+    vertical-align: midle;
+    font-size:1.36rem;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+.empty-state td {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #6b7280;
+}
+
+.empty-icon {
+    font-size: 3rem;
+}
+
+.empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.empty-subtitle {
+    font-size: 0.875rem;
+}
+
+.currency {
+    font-weight: 600;
+    color: #059669;
+}
+
+.date-cell {
+    font-weight: 500;
+}
+
+.truncate {
+    max-width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.edit-btn {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+    background: #dbeafe;
+}
+
+.actions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease-out 0.6s both;
+}
+/*botão excluir tudo*/
+.btn-danger {
+    flex: 1;
+    width: 30%;
+    height: 7rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 150%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+/* botão excluir selecionado*/
+.btn-warning {
+    flex: 1;
+    height: 7rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 150%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-warning:hover {
+    background: #c2410c;
+}
+
+.btn-warning:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.filters-section {
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease-out 0.4s both;
+    
+}
+
+.filter-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+/* quadro icone filtro*/
+.filter-icon {
+    width: 7rem;
+    height: 4rem;
+    background: #2563eb;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+/*texto filtrar por periodo*/
+.filter-header h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.filter-content {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.filter-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+/* botão selecionar periodo*/
+.btn-filter {
+    font-size: 65%;
+    flex: 1;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    height: 5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.btn-filter:hover:not(:disabled) {
+    background: #1d4ed8;
+    
+}
+
+.btn-filter:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+}
+/* botão limpar*/
+.btn-clear {
+    font-size: 80%;
+    background: #2563eb;
+    color: white;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    height: 5rem;
+    padding: 0 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-clear:hover {
+    background: #f9fafb;
+}
+
+.resumo-section {
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease-out 0.2s both;
+}
+
+.resumo-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.resumo-card {
+    padding: 1.5rem;
+}
+.total-card {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 1px solid #a7f3d0;
+}
+
+.comissao-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+}
+
+.resumo-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.resumo-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.total-card .resumo-label {
+    color: #065f46;
+}
+
+.comissao-card .resumo-label {
+    color: #1e40af;
+}
+
+.resumo-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+}
+
+.total-card .resumo-value {
+    color: #047857;
+}
+
+.comissao-card .resumo-value {
+    color: #1d4ed8;
+}
+
+.resumo-percent {
+    font-size: 0.75rem;
+    color: #1e40af;
+    margin-top: 0.25rem;
+}
+
+.resumo-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.total-icon {
+    background: #059669;
+}
+
+.comissao-icon {
+    background: #2563eb;
+}
+
+.footer {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 1rem;
+    text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 0;
+    animation: fadeIn 0.5s ease-out 1s both;
+}
+
+.footer-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #dc2626;
+    margin-bottom: 1rem;
+}
+
+.footer-text {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pix-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 1rem 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pix-btn:hover {
+    background: #15803d;
+    transform: scale(1.05);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 28rem;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-icon {
+    color: #dc2626;
+    font-size: 1.25rem;
+}
+
+.modal-header h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.modal-body {
+    padding: 0 1.5rem 1rem;
+}
+
+.modal-body p {
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@media (min-width: 640px) {
+    .actions-section {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .title {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .table-container {
+        font-size: 0.875rem;
+    }
+    
+    .truncate {
+        max-width: 8rem;
+    }
+}
+  </style>
+</head>
+<body>
+
+  <div id="app" class="min-h-screen">
+        <div class="container">
+            
+            <div class="header">
+                <h1 class="title">Fretes e Comissões</h1>
+                <p class="subtitle">Sistema completo para gerenciamento de fretes e cálculo automático de comissões</p>
+            </div>
+
+            
+            <div class="main-section">
+                <button id="showFormBtn" class="main-btn">
+                    <i class="fas fa-plus"></i>
+Cadastrar Novo Frete
+                </button>
+
+                
+                <div id="freteForm" class="form-container hidden">
+                    <div class="card">
+                        <div id="formHeader" class="form-header hidden">
+                            <div class="form-icon">
+                                
+                            </div>
+                            <h2>Editar Frete</h2>
+                        </div>
+                        <form id="freteFormElement">
+                            <div class="form-group">
+                                <label for="data">Data</label>
+                                <input type="date" id="data" name="data" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="origem">Local de Carregamento</label>
+                                <input type="text" id="origem" name="origem" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="destino">Local de Descarga</label>
+                                <input type="text" id="destino" name="destino" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="valor">Valor do Frete (R$)</label>
+                                <input type="number" id="valor" name="valor" step="0.01" required>
+                            </div>
+
+                            <div class="form-buttons">
+                                <button type="submit" id="submitBtn" class="btn-primary">
+                                    Inserir Frete
+                                </button>
+                                <button type="button" id="cancelBtn" class="btn-secondary">
+                                    <i class="fas fa-times"></i>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="fretesTable" class="table-section">
+                <div class="card">
+                    <div class="table-header">
+                        <h2>Fretes Cadastrados</h2>
+                        <span id="fretesCount" class="count-badge">0 fretes</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-col">
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Data</th>
+                                    <th>Carregamento</th>
+                                    <th>Descarga</th>
+                                    <th class="currency-col">Valor</th>
+                                    <th class="action-col">Editar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fretesTableBody">
+                                <tr class="empty-state">
+                                    <td colspan="6">
+                                        <div class="empty-content">
+                                            <i class="fas fa-box empty-icon"></i>
+                                            <p class="empty-title">Nenhum frete cadastrado</p>
+                                            <p class="empty-subtitle">Comece adicionando seu primeiro frete</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="actionsSection" class="actions-section">
+                <button id="deleteAllBtn" class="btn-danger">
+                    <i class="fas fa-trash"></i>
+                    Excluir Tudo (<span id="totalCount">0</span>)
+                </button>
+                <button id="deleteSelectedBtn" class="btn-warning">
+                    <i class="fas fa-trash"></i>
+                    Excluir Selecionados (<span id="selectedCount">0</span>)
+                </button>
+            </div>
+
+            
+            <div id="filtersSection" class="filters-section">
+                <div class="card">
+                    <div class="filter-header">
+                        <div class="filter-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <h3>Filtrar por Período</h3>
+                    </div>
+                    <div class="filter-content">
+                        <div class="filter-inputs">
+                            <div class="form-group">
+                                <label for="dataInicio">Data Inicial</label>
+                                <input type="date" id="dataInicio" name="dataInicio">
+                            </div>
+                            <div class="form-group">
+                                <label for="dataFim">Data Final</label>
+                                <input type="date" id="dataFim" name="dataFim">
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button id="applyFilterBtn" class="btn-filter" disabled>
+                                <i class="fas fa-calendar"></i>
+                                Selecionar Período
+                            </button>
+                            <button id="clearFilterBtn" class="btn-clear hidden">
+                                <i class="fas fa-times"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="resumoSection" class="resumo-section hidden">
+                <div class="resumo-cards">
+                    <div class="card resumo-card total-card">
+                        <div class="resumo-content">
+                            <div class="resumo-info">
+                                <p class="resumo-label">Total no Período</p>
+                                <p id="totalValue" class="resumo-value">R$ 0,00</p>
+                            </div>
+                            <div class="resumo-icon total-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card resumo-card comissao-card">
+                        <div class="resumo-content">
+                            <div class="resumo-info">
+                                <p class="resumo-label">Comissão Calculada</p>
+                                <p id="comissaoValue" class="resumo-value">R$ 0,00</p>
+                                <p id="percentualValue" class="resumo-percent">0% do total</p>
+                            </div>
+                            <div class="resumo-icon comissao-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <footer class="footer">
+                <h2 class="footer-title">Sistema criado por Paulo Renato</h2>
+                <p class="footer-text">Ajude a aprimorar e desenvolver mais apps como este, qualquer valor será muito bem vindo!</p>
+                <button id="pixBtn" class="pix-btn">Copiar chave PIX</button>
+            </footer>
+        </div>
+    </div>
+
+    
+    <div id="confirmModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle modal-icon"></i>
+                <h3 id="modalTitle">Confirmar Exclusão</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Tem certeza que deseja excluir?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCancel" class="btn-secondary">Cancelar</button>
+                <button id="modalConfirm" class="btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    class FreteApp {
+    constructor() {
+        this.fretes = JSON.parse(localStorage.getItem('fretes')) || [];
+        this.filteredFretes = [];
+        this.selectedFretes = [];
+        this.editingFrete = null;
+        this.hasActiveFilter = false;
+        this.dateFilter = null;
+        
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.loadFretes();
+        this.updateUI();
+    }
+
+    setupEventListeners() {
+        
+        document.getElementById('showFormBtn').addEventListener('click', () => this.showForm());
+        document.getElementById('cancelBtn').addEventListener('click', () => this.cancelForm());
+        document.getElementById('freteFormElement').addEventListener('submit', (e) => this.handleSubmit(e));
+
+        
+        document.getElementById('selectAll').addEventListener('change', (e) => this.handleSelectAll(e.target.checked));
+
+        
+        document.getElementById('deleteAllBtn').addEventListener('click', () => this.confirmDeleteAll());
+        document.getElementById('deleteSelectedBtn').addEventListener('click', () => this.confirmDeleteSelected());
+
+       
+        document.getElementById('dataInicio').addEventListener('change', () => this.updateFilterButton());
+        document.getElementById('dataFim').addEventListener('change', () => this.updateFilterButton());
+        document.getElementById('applyFilterBtn').addEventListener('click', () => this.applyFilter());
+        document.getElementById('clearFilterBtn').addEventListener('click', () => this.clearFilter());
+
+        
+        document.getElementById('modalCancel').addEventListener('click', () => this.closeModal());
+        document.getElementById('modalConfirm').addEventListener('click', () => this.confirmAction());
+
+        
+        document.getElementById('pixBtn').addEventListener('click', () => this.copyPix());
+    }
+
+    loadFretes() {
+        this.applyDefaultFilter();
+        this.updateUI();
+    }
+
+    applyDefaultFilter() {
+        if (this.dateFilter) {
+            
+            this.filteredFretes = this.fretes.filter(frete => {
+                const dataInicio = this.dateFilter.dataInicio;
+                const dataFim = this.dateFilter.dataFim;
+                return (!dataInicio || frete.data >= dataInicio) && (!dataFim || frete.data <= dataFim);
+            });
+        } else {
+            
+            const today = new Date();
+            const currentDay = today.getDate();
+            
+            let startDate, endDate;
+            
+            if (currentDay >= 16) {
+                
+                startDate = new Date(today.getFullYear(), today.getMonth(), 16);
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 15);
+            } else {
+                
+                startDate = new Date(today.getFullYear(), today.getMonth() - 1, 16);
+                endDate = new Date(today.getFullYear(), today.getMonth(), 15);
+            }
+            
+            const formattedStartDate = this.formatDateForFilter(startDate);
+            const formattedEndDate = this.formatDateForFilter(endDate);
+
+            this.filteredFretes = this.fretes.filter(
+                frete => frete.data >= formattedStartDate && frete.data <= formattedEndDate
+            );
+        }
+
+        
+        this.filteredFretes.sort((a, b) => new Date(a.data) - new Date(b.data));
+    }
+
+    formatDateForFilter(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    showForm() {
+        document.getElementById('showFormBtn').classList.add('hidden');
+        document.getElementById('freteForm').classList.remove('hidden');
+        if (!this.editingFrete) {
+            document.getElementById('formHeader').classList.add('hidden');
+        }
+    }
+
+    cancelForm() {
+        document.getElementById('showFormBtn').classList.remove('hidden');
+        document.getElementById('freteForm').classList.add('hidden');
+        document.getElementById('freteFormElement').reset();
+        this.editingFrete = null;
+        this.updateSubmitButton();
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const frete = {
+            id: this.editingFrete ? this.editingFrete.id : Date.now(),
+            data: formData.get('data'),
+            origem: formData.get('origem'),
+            destino: formData.get('destino'),
+            valor: parseFloat(formData.get('valor'))
+        };
+
+        if (this.editingFrete) {
+            this.updateFrete(frete);
+        } else {
+            this.createFrete(frete);
+        }
+
+        this.cancelForm();
+        this.saveToStorage();
+        this.loadFretes();
+        this.showToast(this.editingFrete ? 'Frete atualizado com sucesso!' : 'Frete cadastrado com sucesso!');
+    }
+
+    createFrete(frete) {
+        this.fretes.push(frete);
+    }
+
+    updateFrete(updatedFrete) {
+        const index = this.fretes.findIndex(f => f.id === updatedFrete.id);
+        if (index !== -1) {
+            this.fretes[index] = updatedFrete;
+        }
+    }
+
+    editFrete(frete) {
+        this.editingFrete = frete;
+        this.showForm();
+        
+        
+        document.getElementById('data').value = frete.data;
+        document.getElementById('origem').value = frete.origem;
+        document.getElementById('destino').value = frete.destino;
+        document.getElementById('valor').value = frete.valor;
+        
+        
+        document.getElementById('formHeader').classList.remove('hidden');
+        this.updateSubmitButton();
+        
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    updateSubmitButton() {
+        const btn = document.getElementById('submitBtn');
+        if (this.editingFrete) {
+            btn.textContent = 'Salvar Alterações';
+            btn.classList.add('edit-mode');
+        } else {
+            btn.textContent = 'Inserir Frete';
+            btn.classList.remove('edit-mode');
+        }
+    }
+
+    handleSelectAll(checked) {
+        this.selectedFretes = checked ? this.filteredFretes.map(f => f.id) : [];
+        this.updateUI();
+    }
+
+    handleSelectFrete(freteId, checked) {
+        if (checked) {
+            this.selectedFretes.push(freteId);
+        } else {
+            this.selectedFretes = this.selectedFretes.filter(id => id !== freteId);
+        }
+        this.updateUI();
+    }
+
+    
+    updateFilterButton() {
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+        const canFilter = dataInicio && dataFim;
+
+        document.getElementById('applyFilterBtn').disabled = !canFilter;
+    }
+
+
+    applyFilter() {
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+        
+        this.dateFilter = { dataInicio, dataFim };
+        this.hasActiveFilter = !!(dataInicio || dataFim);
+        this.selectedFretes = [];
+        
+        this.loadFretes();
+        this.updateFilterUI();
+    }
+
+    clearFilter() {
+        document.getElementById('dataInicio').value = '';
+        document.getElementById('dataFim').value = '';
+        this.dateFilter = null;
+        this.hasActiveFilter = false;
+        this.selectedFretes = [];
+        
+        this.loadFretes();
+        this.updateFilterUI();
+    }
+
+    updateFilterUI() {
+        const clearBtn = document.getElementById('clearFilterBtn');
+        if (this.hasActiveFilter) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+        this.updateFilterButton();
+    }
+
+    confirmDeleteAll() {
+        this.showModal(
+            'Confirmar Exclusão',
+            `Tem certeza que deseja excluir TODOS os ${this.fretes.length} fretes? Esta ação não pode ser desfeita.`,
+            () => this.deleteAll()
+        );
+    }
+
+    confirmDeleteSelected() {
+        this.showModal(
+            'Confirmar Exclusão',
+            `Tem certeza que deseja excluir os ${this.selectedFretes.length} fretes selecionados? Esta ação não pode ser desfeita.`,
+            () => this.deleteSelected()
+        );
+    }
+
+    deleteAll() {
+        this.fretes = [];
+        this.selectedFretes = [];
+        this.saveToStorage();
+        this.loadFretes();
+        this.showToast('Todos os fretes foram excluídos!');
+    }
+
+    deleteSelected() {
+        this.fretes = this.fretes.filter(frete => !this.selectedFretes.includes(frete.id));
+        const count = this.selectedFretes.length;
+        this.selectedFretes = [];
+        this.saveToStorage();
+        this.loadFretes();
+        this.showToast(`${count} fretes excluídos com sucesso!`);
+    }
+
+    showModal(title, message, confirmAction) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('confirmModal').classList.remove('hidden');
+        this.pendingAction = confirmAction;
+    }
+
+    closeModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+        this.pendingAction = null;
+    }
+
+    confirmAction() {
+        if (this.pendingAction) {
+            this.pendingAction();
+            this.pendingAction = null;
+        }
+        this.closeModal();
+    }
+
+    copyPix() {
+        const pixKey ='49d0c7a5-d9e8-460d-b68c-bafd981bb69a';
+        navigator.clipboard.writeText(pixKey).then(() => {
+            this.showToast('Chave PIX copiada!');
+        });
+    }
+
+    
+    showToast(message) {
+        const icon = document.getElementById('toastIcon');
+        const title = document.getElementById('toastTitle');
+        const msg = document.getElementById('toastMessage');
+        const modal = document.getElementById('toastModal');
+
+        let iconClass = 'fa-brands fa-pix';
+        let titleText = 'Obrigado';
+
+        if (message.includes('cadastrado')) {
+            iconClass = 'fas fa-thumbs-up';
+            titleText = 'Sucesso';
+        } else if (message.includes('excluídos') || message.includes('excluídos com sucesso')) {
+            iconClass = 'fas fa-trash';
+            titleText = 'Fretes Excluídos';
+        } else if (message.includes('PIX copiado')) {
+            iconClass = 'fas fa-coins';
+            titleText = 'Chave PIX Copiada';
+        }
+
+        icon.className = `modal-icon ${iconClass}`;
+        title.textContent = titleText;
+        msg.textContent = message;
+
+        modal.classList.remove('hidden');
+
+        document.getElementById('toastCloseBtn').onclick = () => {
+            modal.classList.add('hidden');
+        };
+    }
+
+
+    saveToStorage() {
+        localStorage.setItem('fretes', JSON.stringify(this.fretes));
+    }
+
+    updateUI() {
+        this.updateTable();
+        this.updateCounters();
+        this.updateResumo();
+    }
+
+    updateTable() {
+        const tbody = document.getElementById('fretesTableBody');
+        
+        if (this.filteredFretes.length === 0) {
+            tbody.innerHTML = `
+                <tr class="empty-state">
+                    <td colspan="6">
+                        <div class="empty-content">
+                            <i class="fas fa-box empty-icon"></i>
+                            <p class="empty-title">Nenhum frete cadastrado</p>
+                            <p class="empty-subtitle">Comece adicionando seu primeiro frete</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tbody.innerHTML = this.filteredFretes.map(frete => `
+                <tr>
+                    <td class="checkbox-col">
+                        <input type="checkbox" 
+                               ${this.selectedFretes.includes(frete.id) ? 'checked' : ''} 
+                               onchange="app.handleSelectFrete(${frete.id}, this.checked)">
+                    </td>
+                    <td class="date-cell">${this.formatDate(frete.data)}</td>
+                    <td><div class="truncate" title="${frete.origem}">${frete.origem}</div></td>
+                    <td><div class="truncate" title="${frete.destino}">${frete.destino}</div></td>
+                    <td class="currency-col"><span class="currency">${this.formatCurrency(frete.valor)}</span></td>
+                    <td class="action-col">
+                        <button class="edit-btn" onclick="app.editFrete(${JSON.stringify(frete).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const isAllSelected = this.filteredFretes.length > 0 && this.selectedFretes.length === this.filteredFretes.length;
+        const isIndeterminate = this.selectedFretes.length > 0 && this.selectedFretes.length < this.filteredFretes.length;
+        
+        selectAllCheckbox.checked = isAllSelected;
+        selectAllCheckbox.indeterminate = isIndeterminate;
+    }
+
+    updateCounters() {
+        
+        const count = this.filteredFretes.length;
+        document.getElementById('fretesCount').textContent = `${count} ${count === 1 ? 'frete' : 'fretes'}`;
+        
+        
+        document.getElementById('totalCount').textContent = this.fretes.length;
+        document.getElementById('selectedCount').textContent = this.selectedFretes.length;
+        
+        
+        document.getElementById('deleteAllBtn').disabled = this.fretes.length === 0;
+        document.getElementById('deleteSelectedBtn').disabled = this.selectedFretes.length === 0;
+    }
+
+    updateResumo() {
+        const resumoSection = document.getElementById('resumoSection');
+        
+        if (this.hasActiveFilter && this.filteredFretes.length > 0) {
+            const total = this.filteredFretes.reduce((sum, frete) => sum + frete.valor, 0);
+            const comissao = this.calcularComissao(total);
+            const percentual = total > 0 ? (comissao / total) * 100 : 0;
+            
+            document.getElementById('totalValue').textContent = this.formatCurrency(total);
+            document.getElementById('comissaoValue').textContent = this.formatCurrency(comissao);
+            document.getElementById('percentualValue').textContent = this.formatarPercentual(percentual) + ' do total';
+            
+            resumoSection.classList.remove('hidden');
+        } else {
+            resumoSection.classList.add('hidden');
+        }
+    }
+
+    calcularComissao(valorTotal) {
+        let percentual = 0;
+
+        if (valorTotal <= 20000) {
+            percentual = 2;
+        } else {
+            const valorAcima20k = valorTotal - 20000;
+            const incrementos1k = Math.floor(valorAcima20k / 1000);
+            percentual = 2 + (incrementos1k * 0.1);
+            if (percentual > 3.5) {
+                percentual = 3.5;
+            }
+        }
+
+        return (valorTotal * percentual) / 100;
+    }
+
+    formatarPercentual(percentual) {
+        if (percentual % 1 === 0) {
+            return `${Math.round(percentual)}%`;
+        } else {
+            return `${percentual.toFixed(1).replace('.', ',')}%`;
+        }
+    }
+
+    formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    }
+
+    formatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        const date = new Date(year, month - 1, day);
+        return new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }).format(date);
+    }
+}
+
+
+const app = new FreteApp();
+        
+  </script>
+
+<!-- Modal de Notificação -->
+<div id="toastModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <i id="toastIcon" class="modal-icon"></i>
+      <h3 id="toastTitle">Mensagem</h3>
+    </div>
+    <div class="modal-body">
+      <p id="toastMessage">Texto da mensagem</p>
+    </div>
+    <div class="modal-footer">
+      <button id="toastCloseBtn" class="btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
