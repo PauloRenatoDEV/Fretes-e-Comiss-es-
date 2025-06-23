@@ -17,6 +17,19 @@ body {
     background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #000000 100%);
     min-height: 100vh;
 }
+
+#calendario{
+    margin: 10px;
+}
+
+#btnlimp{
+    margin: 10px;
+}
+
+#btncanc{
+    margin: 10px;
+}
+
 #formHeader{
     color: black;
     display:flex;
@@ -135,9 +148,6 @@ body {
 }
 
 .form-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 2rem;
     animation: fadeIn 0.3s ease-out;
 }
@@ -338,8 +348,7 @@ tr:hover {
 }
 
 .currency {
-    font-weight: 600;
-    color: #059669;
+    color: black;
 }
 
 .date-cell {
@@ -361,6 +370,7 @@ tr:hover {
     padding: 0.5rem;
     border-radius: 0.25rem;
     transition: all 0.2s ease;
+    transform: scale(1.8, 1.8);
 }
 
 .edit-btn:hover {
@@ -421,7 +431,7 @@ tr:hover {
 }
 
 .btn-warning:hover {
-    background: #c2410c;
+    background: #b91c1c;
 }
 
 .btn-warning:disabled {
@@ -430,7 +440,6 @@ tr:hover {
 }
 
 .filters-section {
-    width: 100%;
     margin-bottom: 2rem;
     animation: fadeIn 0.5s ease-out 0.4s both;
     
@@ -479,7 +488,8 @@ tr:hover {
 }
 /* botão selecionar periodo*/
 .btn-filter {
-    padding: 1%;
+    display: 1;
+    padding: 5;
     background: #dc2626;
     color: white;
     border: none;
@@ -489,7 +499,7 @@ tr:hover {
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content:center;
 }
 
 .btn-filter:hover:not(:disabled) {
@@ -504,7 +514,9 @@ tr:hover {
 }
 /* botão limpar*/
 .btn-clear {
-    padding: 5%;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
     background: #dc2626;
     color: white;
     border: none;
@@ -512,9 +524,6 @@ tr:hover {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .btn-clear:hover {
@@ -828,7 +837,7 @@ Cadastrar Novo Frete
                                     Inserir Frete
                                 </button>
                                 <button type="button" id="cancelBtn" class="btn-secondary">
-                                    <i class="fas fa-times"></i>
+                                    <i class="fas fa-times" id="btncanc"></i>
                                     Cancelar
                                 </button>
                             </div>
@@ -908,11 +917,11 @@ Cadastrar Novo Frete
                         </div>
                         <div class="filter-buttons">
                             <button id="applyFilterBtn" class="btn-filter" disabled>
-                                <i class="fas fa-calendar"></i>
+                                <i class="fas fa-calendar" id="calendario"></i>
                                 Selecionar Período
                             </button>
                             <button id="clearFilterBtn" class="btn-clear hidden">
-                                <i class="fas fa-times"></i>
+                                <i class="fas fa-times" id="btnlimp"></i>
                                 Limpar
                             </button>
                         </div>
