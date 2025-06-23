@@ -101,7 +101,7 @@ body {
 /* botão cadastrar novo frete*/
 .main-btn {
     width: 100%;
-    height: 5vh;
+    padding: 5%;
     background: #dc2626;
     color: white;
     border: none;
@@ -131,9 +131,13 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #1f2937;
+    overflow: hidden;
 }
 
 .form-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 2rem;
     animation: fadeIn 0.3s ease-out;
 }
@@ -167,21 +171,26 @@ form {
 
 .form-buttons {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.75rem;
     margin-top: 2rem;
 }
-
+/*botão inserir frete*/
 .btn-primary {
     flex: 1;
-    height: 3.5rem;
+    padding: 5%;
     background: #dc2626;
     color: white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 1.125rem;
+    font-size: 130%;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .btn-primary:hover {
@@ -189,33 +198,46 @@ form {
 }
 
 .btn-primary.edit-mode {
-    background: #2563eb;
-    
-}
-
-.btn-primary.edit-mode:hover {
-    background: #1d4ed8;
-}
-/* botao cancelar*/
-.btn-secondary {
-    height: 7rem;
-    padding: 0 1.5rem;
-    background:#dc2626;
+    flex: 1;
+    padding: 5%;
+    background: #dc2626;
     color: white;
-    border: 2px solid #d1d5db;
+    border: none;
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: 130%;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-evenly;
+    
+}
+
+.btn-primary.edit-mode:hover {
+    background: #b91c1c;
+}
+/* botao cancelar*/
+.btn-secondary {
+    flex: 1;
+    padding: 5%;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 130%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .btn-secondary:hover {
-    background: #f9fafb;
+    background: #b91c1c;
 }
+
 
 .table-section {
     margin-bottom: 2rem;
@@ -355,14 +377,14 @@ tr:hover {
 /*botão excluir tudo*/
 .btn-danger {
     flex: 1;
-    width: 30%;
     height: 7rem;
     background: #dc2626;
     color: white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 150%;
+    font-size: 130%;
     font-weight: 600;
+    padding: 5%;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -383,11 +405,12 @@ tr:hover {
 .btn-warning {
     flex: 1;
     height: 7rem;
+    padding: 5%;
     background: #dc2626;
     color: white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 150%;
+    font-size: 130%;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -407,6 +430,7 @@ tr:hover {
 }
 
 .filters-section {
+    width: 100%;
     margin-bottom: 2rem;
     animation: fadeIn 0.5s ease-out 0.4s both;
     
@@ -420,8 +444,8 @@ tr:hover {
 }
 /* quadro icone filtro*/
 .filter-icon {
-    width: 7rem;
-    height: 4rem;
+    width: 50px;
+    height: 50px;
     background: #2563eb;
     border-radius: 0.5rem;
     display: flex;
@@ -431,8 +455,7 @@ tr:hover {
 }
 /*texto filtrar por periodo*/
 .filter-header h3 {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #1f2937;
 }
 
@@ -448,29 +471,29 @@ tr:hover {
 }
 
 .filter-buttons {
+    display: 1;
     display: flex;
+    align-items: center;
+    justify-content: space-evenly;
     gap: 0.75rem;
 }
 /* botão selecionar periodo*/
 .btn-filter {
-    font-size: 65%;
-    flex: 1;
-    background: #2563eb;
+    padding: 1%;
+    background: #dc2626;
     color: white;
     border: none;
     border-radius: 0.5rem;
-    height: 5rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 2rem;
+    justify-content: space-evenly;
 }
 
 .btn-filter:hover:not(:disabled) {
-    background: #1d4ed8;
+    background: #b91c1c;
     
 }
 
@@ -481,23 +504,21 @@ tr:hover {
 }
 /* botão limpar*/
 .btn-clear {
-    font-size: 80%;
-    background: #2563eb;
+    padding: 5%;
+    background: #dc2626;
     color: white;
-    border: 2px solid #d1d5db;
+    border: none;
     border-radius: 0.5rem;
-    height: 5rem;
-    padding: 0 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
 }
 
 .btn-clear:hover {
-    background: #f9fafb;
+    background: #b91c1c;
 }
 
 .resumo-section {
